@@ -13,8 +13,13 @@
 
 Los siguientes módulos son requeridos:
 
- - vlc
- - keyboard
+ - **vlc**
+
+       pip install python-vlc
+
+ - **keyboard**
+
+       pip install keyboard
 
 ### Ejecutar
 
