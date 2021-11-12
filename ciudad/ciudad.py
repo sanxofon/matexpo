@@ -309,6 +309,7 @@ listPorts = serial_ports()
 if port not in listPorts:
     print("No se detecta el puerto del arduino: "+port)
     print("Lista de puertos disponibles: ["+", ".join(listPorts)+"]")
+    print("Edite el nombre del puerto a partir de la línea 300 o habilite el modo debug para testear...")
     if debuguear:
         port=0
     else:
