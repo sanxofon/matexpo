@@ -295,7 +295,9 @@ class ciudad(object):
 
         self._job = self.master.after(self.velocidad, self.onUpdate)
 
-# VARIABLES DEL SERIAL
+#######################
+# VARIABLES GENERALES #
+#######################
 port = 'COM3'   # Puerto serial
 baud = 9600     # Baudios. Velocidad de muestreo
 fullscreen = 1 # Abrir en pantalla completa. Dev: 0, Prd: 1
@@ -313,6 +315,6 @@ if port not in listPorts:
         exit(0)
 
 root = Tk()
-cu = ciudad(port,baud,debuguear);
+cu = ciudad(port,baud,fullscreen,smallscreen,debuguear);
 cu.iniciar(root);
 root.mainloop()
