@@ -300,9 +300,10 @@ class ciudad(object):
 #######################
 port = 'COM3'   # Puerto serial
 baud = 9600     # Baudios. Velocidad de muestreo
-fullscreen = 1 # Abrir en pantalla completa. Dev: 0, Prd: 1
-smallscreen = 0  # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
+fullscreen = 1  # Abrir en pantalla completa. Dev: 0, Prd: 1
+smallscreen = 1 # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
 debuguear = 0   # Verbose. Muestra las tripas durante desarrollo. Permite probar el programa sin el Arduino
+testeo = 1      # Continúa a pesar de no detectar puerto serial, para testeo
 
 # Test de puertos seriales
 listPorts = serial_ports()
@@ -310,7 +311,7 @@ if port not in listPorts:
     print("No se detecta el puerto del arduino: "+port)
     print("Lista de puertos disponibles: ["+", ".join(listPorts)+"]")
     print("Edite el nombre del puerto a partir de la línea 300 o habilite el modo debug para testear...")
-    if debuguear:
+    if debuguear or testeo:
         port=0
     else:
         exit(0)
