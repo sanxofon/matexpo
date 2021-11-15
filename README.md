@@ -29,7 +29,7 @@ En un entorno de **python 3.8+**:
 
     python videos.py
 
-![Captura de pantalla de video.py](/videos.png)
+
 
 # ciudad.py
 
@@ -70,5 +70,9 @@ Los siguientes módulos son requeridos:
 Definir VARIABLES GENERALES en el código y ejecutar en un entorno de **python 2.7+**:
 
     python videos.py
-    
-![Captura de pantalla de ciudad.py](/ciudad.png)
+
+
+### ToDo
+
+- [ ] Recibe un numero entre [2,3, 5, 7] lo "memoriza" y "espera el siguiente"
+- [ ] Cada cierto tiempo de espera se manda la secuencia de **z** como *demo* de videojuego.
