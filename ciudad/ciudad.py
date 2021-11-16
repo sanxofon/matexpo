@@ -65,6 +65,28 @@ def serial_ports():
             pass
     return result
 
+class ReadLine:
+    def __init__(self, s):
+        self.buf = bytearray()
+        self.s = s
+
+    def readline(self):
+        i = self.buf.find(b"\n")
+        if i >= 0:
+            r = self.buf[:i+1]
+            self.buf = self.buf[i+1:]
+            return r
+        while True:
+            i = max(1, min(2048, self.s.in_waiting))
+            data = self.s.read(i)
+            i = data.find(b"\n")
+            if i >= 0:
+                r = self.buf + data[:i+1]
+                self.buf[0:] = data[i+1:]
+                return r
+            else:
+                self.buf.extend(data)
+
 class ciudad(object):
     def __init__(self, port, baud, fullscreen=1, smallscreen=0, debuguear=0):
         self.port = port
@@ -76,7 +98,8 @@ class ciudad(object):
 
     def iniciar(self, master):
         ######### VARIABLES GENERALES #########
-        self.velocidad = 100 #Milisegundos
+        self.velocidad = 300 #Milisegundos
+        self.timeout = None #Segundos
         self._job = None
         self.res = None
         #############iniciar##########################
@@ -195,6 +218,11 @@ class ciudad(object):
             self.colr[c][3].place(relx=self.colr[c][0][0], rely=self.colr[c][0][1]) # Result labels
             self.coli[c][7][3].place(relx=self.coli[c][7][0][0], rely=self.coli[c][7][0][1]) # Images (azotea)
         #######################################
+
+        self.uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=self.timeout)
+        # while True:
+        self.rl = ReadLine(self.uart)
+
         self._job = self.master.after(self.velocidad, self.onUpdate)
 
 
@@ -223,16 +251,14 @@ class ciudad(object):
                 ]
                 time.sleep(1)
         else: # Intenta leer del serial
-            datos = None
-            uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=3)
-            data = uart.readline() #.decode()
-               # if not data:
-               #    break
+
+            datos = ''
+            data = self.rl.readline()
             datos=str(data).strip()
-            uart.close()
             
-            if self.debuguear:
-                print("Datos en serial:",datos)
+            # if self.debuguear:
+            print("Datos en serial:",datos)
+            
             if len(datos)==0 or len(datos)!=21 or datos==self.memdatos:
                 datos = None
             if datos is not None:
@@ -307,7 +333,7 @@ listPorts = serial_ports()
 if port not in listPorts:
     print("No se detecta el puerto del arduino: "+port)
     print("Lista de puertos disponibles: ["+", ".join(listPorts)+"]")
-    print("Edite el nombre del puerto a partir de la línea 300 o habilite el modo debug para testear...")
+    print("Edite el nombre del puerto a partir de la linea 300 o habilite el modo debug para testear...")
     if randomserial:
         port=0
     else:
