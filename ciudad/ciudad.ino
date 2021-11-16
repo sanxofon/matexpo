@@ -3,8 +3,8 @@
 //========================= SANXOFON ==========================*/
 
 
-long randNumber;         // the variable which is supposed to hold the random number
-String cadena = String(0); // 21 caracteres
+String cadena; // 21 caracteres
+int ii=0;
 void setup()
 {
   // initialize the serial port
@@ -15,19 +15,23 @@ void setup()
 
 void loop()
 {
-  if (random(0, 30)==0) {
-    for (int i = 0; i < 21; ++i) {
-      if(i==0){
+      if (ii==0) {
         cadena = String(random(0, 9));
       } else {
         cadena = cadena + random(0, 9); // generate a random number adn add to string
-      }                                 
+      }
+      ii++;                  
+    String cadenout=String(cadena);
+    if(cadenout.length()<21){
+      for (int i = ii; i < 21; ++i) {
+        cadenout = cadenout + '0';
+      }
     }
-    Serial.println(cadena);
-  } //else {
-    //if (random(0, 9)==0) {
-      //Serial.println(cadena);
-    //}
-  //}                                               // send the random number to the serial port
-  delay(300);
+    Serial.println(cadenout);
+    if(ii>=21) {
+      ii=0;
+      delay(100);
+    } else {
+      delay(100);
+    }
 }
