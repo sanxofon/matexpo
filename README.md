@@ -29,7 +29,7 @@ En un entorno de **python 3.8+**:
 
     python videos.py
 
-
+---
 
 # ciudad.py
 
@@ -77,6 +77,7 @@ Definir VARIABLES GENERALES en el código y ejecutar en un entorno de **python 2
 - [ ] Recibe un numero entre [2,3, 5, 7] lo "memoriza" y "espera el siguiente"
 - [ ] Cada cierto tiempo de espera se manda la secuencia de **z** como *demo* de videojuego.
 
+---
 
 # digitos.py
 
