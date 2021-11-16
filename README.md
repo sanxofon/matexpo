@@ -29,6 +29,11 @@ En un entorno de **python 3.8+**:
 
     python videos.py
 
+### ToDo
+
+- [ ] Recibe un numero entre [2,3, 5, 7] lo "memoriza" y "espera el siguiente"
+- [ ] Cada cierto tiempo de espera se manda la secuencia de **z** como *demo* de videojuego.
+
 ---
 
 # ciudad.py
@@ -70,12 +75,6 @@ Los siguientes módulos son requeridos:
 Definir VARIABLES GENERALES en el código y ejecutar en un entorno de **python 2.7+**:
 
     python videos.py
-
-
-### ToDo
-
-- [ ] Recibe un numero entre [2,3, 5, 7] lo "memoriza" y "espera el siguiente"
-- [ ] Cada cierto tiempo de espera se manda la secuencia de **z** como *demo* de videojuego.
 
 ---
 
