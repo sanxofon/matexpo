@@ -6,6 +6,9 @@ import vlc
 import time
 import keyboard
 
+# Variables Generales
+tiempomax = 30 # En segundos, aproximados, el tiempo de espera en "idle" para que se corra la animación "z"
+
 class VLC:
     def __init__(self):
         # self.vlist = ['./videos/video0.mp4','./videos/video1.mp4','./videos/video2.mp4']
@@ -27,11 +30,25 @@ class VLC:
             'a':'./videos/4K_K73.mp4',
             'b':'./videos/4K_K75.mp4',
         }
+        self.tabla = {
+            '23':'0',
+            '25':'1',
+            '27':'2',
+            '32':'3',
+            '35':'4',
+            '37':'5',
+            '52':'6',
+            '53':'7',
+            '57':'8',
+            '72':'9',
+            '73':'a',
+            '75':'b',
+        }
 
         instance = vlc.Instance()
         self.player = instance.media_player_new()
         self.player.set_fullscreen(True)
-        self.playing = set([1,2,3,4]) # ??
+        # self.playing = set([1,2,3,4]) # ??
         self.play = False
         self.current = -1
 
@@ -45,21 +62,37 @@ class VLC:
     def is_playing(self):
         return self.player.is_playing()
 
-# General Variables
+
+# Variables internas, no modificar
 salir = False
 canPlay = True
+memoria = ['',''] # Aquí se guardan las entradas del teclado (dos números entre [2,3,5,7])
 
 def pressN(e):
-    global canPlay
+    global canPlay,memoria
     if e.name=='esc':
         global salir
         salir=True
         # print("set Salir")
         return
-    if e.name in player.vlist and canPlay:
-        canPlay = False
-        player.playVideo(e.name)
-        time.sleep(1) # This may be obligatory
+
+    if str(e.name) in ['2','3','5','7']:
+        if memoria[0]!='': # Si ya se recibió el anterior
+            if memoria[0]==str(e.name): # Si se recibe dos veces el mismo se resetea
+                memoria=['','']
+            else:
+                memoria[1]=str(e.name)
+            m = memoria[0]+memoria[1]
+            
+            if canPlay and memoria[0]+memoria[1] in player.tabla:
+                canPlay = False
+                player.playVideo(player.tabla[memoria[0]+memoria[1]])
+                memoria=['','']
+                time.sleep(1) # This may be obligatory
+        else:
+            memoria[0]=str(e.name)
+
+        print(memoria)
 
 def playW(e,q='w'):
     # Default de ida
@@ -78,7 +111,7 @@ player = VLC()
 
 # Play first video --> Not needed!
 # playW(None)
-
+tiempo = 0
 while True:
     if salir:
         # print("Salir")
@@ -86,11 +119,19 @@ while True:
     if player.is_playing():
         # Do nothing
         time.sleep(1) # Less CPU usage?
+        tiempo = 0
     else:
-        if player.current=='z':
+        if player.current=='z': # Si se recibió 'Z'
             playW(None,'x')
         elif player.current=='x':
             playW(None,'y')
         elif player.current!='w':
-            playW(None)
+            playW(None,'w')
+        else:
+            tiempo+=1
+            if tiempo>tiempomax: # si ha pasado un tiempo en pausa muy largo
+                tiempo = 0
+                playW(None,'z')
+            # print(tiempo,end='         \r')
+
         time.sleep(1) # This may be obligatory
