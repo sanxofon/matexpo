@@ -212,86 +212,83 @@ class ciudad(object):
     def onUpdate(self):
         self.calcelUpdate()
 
-        # if self.port!=0:
-        # Intenta leer del serial
-        datos = None
-        uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=3)
-        data = uart.readline() #.decode()
-           # if not data:
-           #    break
-        datos=str(data).strip()
-        uart.close()
-
-        print("Datos crudos:",datos)
-        if len(datos)==0 or len(datos)!=21 or datos==self.memdatos:
+        if self.port==0: #Genera datos random (ver "randomserial" en variables generales)
+            ra = [0,9,99,999,9999,99999,999999,9999999,9999999]
             datos = None
-            # else:
-            #     print("No data")
-        # else:
-        #     # Genera datos random
-        #     ra = [0,9,99,999,9999,99999,999999,9999999,9999999]
-        #     datos = None
-        #     if randint(0,1)==0:
-        #         datos = [
-        #             str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
-        #             str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
-        #             str(randint(0,ra[randint(0,8)])).ljust(7,'0')
-        #         ]
-        #         time.sleep(1)
-        if datos is not None:
+            if randint(0,1)==0:
+                datos = [
+                    str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
+                    str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
+                    str(randint(0,ra[randint(0,8)])).ljust(7,'0')
+                ]
+                time.sleep(1)
+        else: # Intenta leer del serial
+            datos = None
+            uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=3)
+            data = uart.readline() #.decode()
+               # if not data:
+               #    break
+            datos=str(data).strip()
+            uart.close()
+            
             if self.debuguear:
-                print("Datos a corregir:",datos)
-            self.memdatos = datos
-            #divide cada 7 caracteres
-            n = 7
-            datos = [datos[i:i+n] for i in range(0, len(datos), n)]
-            for c in range(3):
-                datos[c] = list(datos[c])
-                m = 1
-                for r in range(len(datos[c])):
-                    n = self.primos[int(datos[c][r])]
-                    if n>0:
-                        if r==0:
-                            fin = 'b'+("ch" if self.smallscreen else "")+'.png'
-                        else:
-                            fin = ("ch" if self.smallscreen else "")+'.png'
-                        self.cols[c][r][2].set(str(n)+" x")
-                        im = ImageTk.PhotoImage(Image.open(self.images[int(datos[c][r])]+fin))
-                        self.coli[c][r][3].config(image = im)
-                        self.coli[c][r][3].photo_ref = im # keep a reference
-                        m*=n # Filtra por la tabla
-                    else:
-                        for rr in range(r,len(datos[c])):
-                            datos[c][rr]='0'
-                            if rr==0:
-                                imurl = self.images[10]+"b"+("ch" if self.smallscreen else "")+".png"
-                            elif r==rr:
-                                imurl = self.images[10]+("ch" if self.smallscreen else "")+".png"
+                print("Datos en serial:",datos)
+            if len(datos)==0 or len(datos)!=21 or datos==self.memdatos:
+                datos = None
+            if datos is not None:
+                if self.debuguear:
+                    print("Datos recibidos:",datos)
+                self.memdatos = datos
+                #divide cada 7 caracteres
+                n = 7
+                datos = [datos[i:i+n] for i in range(0, len(datos), n)]
+                for c in range(3):
+                    datos[c] = list(datos[c])
+                    m = 1
+                    for r in range(len(datos[c])):
+                        n = self.primos[int(datos[c][r])]
+                        if n>0:
+                            if r==0:
+                                fin = 'b'+("ch" if self.smallscreen else "")+'.png'
                             else:
-                                imurl = self.images[0]+("ch" if self.smallscreen else "")+".png"
-                            self.cols[c][rr][2].set(self.cols[c][rr][1])
-                            im = ImageTk.PhotoImage(Image.open(imurl))
-                            self.coli[c][rr][3].config(image = im)
-                            self.coli[c][rr][3].photo_ref = im # keep a reference
-                        break
+                                fin = ("ch" if self.smallscreen else "")+'.png'
+                            self.cols[c][r][2].set(str(n)+" x")
+                            im = ImageTk.PhotoImage(Image.open(self.images[int(datos[c][r])]+fin))
+                            self.coli[c][r][3].config(image = im)
+                            self.coli[c][r][3].photo_ref = im # keep a reference
+                            m*=n # Filtra por la tabla
+                        else:
+                            for rr in range(r,len(datos[c])):
+                                datos[c][rr]='0'
+                                if rr==0:
+                                    imurl = self.images[10]+"b"+("ch" if self.smallscreen else "")+".png"
+                                elif r==rr:
+                                    imurl = self.images[10]+("ch" if self.smallscreen else "")+".png"
+                                else:
+                                    imurl = self.images[0]+("ch" if self.smallscreen else "")+".png"
+                                self.cols[c][rr][2].set(self.cols[c][rr][1])
+                                im = ImageTk.PhotoImage(Image.open(imurl))
+                                self.coli[c][rr][3].config(image = im)
+                                self.coli[c][rr][3].photo_ref = im # keep a reference
+                            break
 
-                 # Poner azotea hasta arriba
-                if self.primos[int(datos[c][6])]:
-                    imurl = self.images[10]+("ch" if self.smallscreen else "")+".png"
-                else:
-                    imurl = self.images[0]+("ch" if self.smallscreen else "")+".png"
-                im = ImageTk.PhotoImage(Image.open(imurl))
-                self.coli[c][7][3].config(image = im)
-                self.coli[c][7][3].photo_ref = im # keep a reference
+                     # Poner azotea hasta arriba
+                    if self.primos[int(datos[c][6])]:
+                        imurl = self.images[10]+("ch" if self.smallscreen else "")+".png"
+                    else:
+                        imurl = self.images[0]+("ch" if self.smallscreen else "")+".png"
+                    im = ImageTk.PhotoImage(Image.open(imurl))
+                    self.coli[c][7][3].config(image = im)
+                    self.coli[c][7][3].photo_ref = im # keep a reference
 
-                # Label de resultado por columna
-                self.colr[c][2].set(self.fillSpaces("= "+'{:,}'.format(m),16,' '))
+                    # Label de resultado por columna
+                    self.colr[c][2].set(self.fillSpaces("= "+'{:,}'.format(m),16,' '))
 
 
-                datos[c] = "".join(datos[c])
-            datos = "".join(datos)
-            if self.debuguear:
-                print("Datos corregidos:",datos)
+                    datos[c] = "".join(datos[c])
+                datos = "".join(datos)
+                if self.debuguear:
+                    print("Datos corregidos:",datos)
 
         self._job = self.master.after(self.velocidad, self.onUpdate)
 
@@ -301,8 +298,9 @@ class ciudad(object):
 port = 'COM3'   # Puerto serial
 baud = 9600     # Baudios. Velocidad de muestreo
 fullscreen = 1  # Abrir en pantalla completa. Dev: 0, Prd: 1
-smallscreen = 1 # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
+smallscreen = 0 # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
 debuguear = 0   # Verbose. Muestra las tripas durante desarrollo. Permite probar el programa sin el Arduino
+randomserial = 0 # Genera cadenas de 21 dígitos al azar en vez de leer del serial
 
 # Test de puertos seriales
 listPorts = serial_ports()
@@ -310,7 +308,7 @@ if port not in listPorts:
     print("No se detecta el puerto del arduino: "+port)
     print("Lista de puertos disponibles: ["+", ".join(listPorts)+"]")
     print("Edite el nombre del puerto a partir de la línea 300 o habilite el modo debug para testear...")
-    if debuguear: # or testeo:
+    if randomserial:
         port=0
     else:
         exit(0)
