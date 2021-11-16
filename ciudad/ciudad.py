@@ -72,10 +72,11 @@ class ciudad(object):
         self.fullscreen = fullscreen
         self.smallscreen = smallscreen
         self.debuguear = debuguear
+        self.memdatos = ''
 
     def iniciar(self, master):
         ######### VARIABLES GENERALES #########
-        self.velocidad = 1000 #Milisegundos
+        self.velocidad = 100 #Milisegundos
         self._job = None
         self.res = None
         #############iniciar##########################
@@ -211,37 +212,36 @@ class ciudad(object):
     def onUpdate(self):
         self.calcelUpdate()
 
-        if self.port!=0:
-            # Intenta leer del serial
-            datos = []
-            uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=1)
-            while True:
-               data = uart.readline() #.decode()
-               if not data:
-                  break
-               datos.append(data)
-            uart.close()
+        # if self.port!=0:
+        # Intenta leer del serial
+        datos = None
+        uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=3)
+        data = uart.readline() #.decode()
+           # if not data:
+           #    break
+        datos=str(data).strip()
+        uart.close()
 
-            if len(datos)==0:
-                datos = None
+        print("Datos crudos:",datos)
+        if len(datos)==0 or len(datos)!=21 or datos==self.memdatos:
+            datos = None
             # else:
             #     print("No data")
-        else:
-            # Genera datos random
-            ra = [0,9,99,999,9999,99999,999999,9999999,9999999]
-            datos = None
-            if randint(0,1)==0:
-                datos = [
-                    str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
-                    str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
-                    str(randint(0,ra[randint(0,8)])).ljust(7,'0')
-                ]
-                time.sleep(1)
+        # else:
+        #     # Genera datos random
+        #     ra = [0,9,99,999,9999,99999,999999,9999999,9999999]
+        #     datos = None
+        #     if randint(0,1)==0:
+        #         datos = [
+        #             str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
+        #             str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
+        #             str(randint(0,ra[randint(0,8)])).ljust(7,'0')
+        #         ]
+        #         time.sleep(1)
         if datos is not None:
-            datos = "".join(datos)
             if self.debuguear:
                 print("Datos a corregir:",datos)
-
+            self.memdatos = datos
             #divide cada 7 caracteres
             n = 7
             datos = [datos[i:i+n] for i in range(0, len(datos), n)]
@@ -303,7 +303,6 @@ baud = 9600     # Baudios. Velocidad de muestreo
 fullscreen = 1  # Abrir en pantalla completa. Dev: 0, Prd: 1
 smallscreen = 1 # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
 debuguear = 0   # Verbose. Muestra las tripas durante desarrollo. Permite probar el programa sin el Arduino
-testeo = 1      # Continúa a pesar de no detectar puerto serial, para testeo
 
 # Test de puertos seriales
 listPorts = serial_ports()
@@ -311,7 +310,7 @@ if port not in listPorts:
     print("No se detecta el puerto del arduino: "+port)
     print("Lista de puertos disponibles: ["+", ".join(listPorts)+"]")
     print("Edite el nombre del puerto a partir de la línea 300 o habilite el modo debug para testear...")
-    if debuguear or testeo:
+    if debuguear: # or testeo:
         port=0
     else:
         exit(0)
