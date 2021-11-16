@@ -31,8 +31,9 @@ En un entorno de **python 3.8+**:
 
 ### ToDo
 
-- [ ] Recibe un numero entre [2,3, 5, 7] lo "memoriza" y "espera el siguiente"
-- [ ] Cada cierto tiempo de espera se manda la secuencia de **z** como *demo* de videojuego.
+- [ ] Enviar por serial la memoria (dos números entre [2,3,5,7]) para que un Arduino prenda los foquitos adecuados
+- [x] Recibe un numero entre [2,3, 5, 7] lo "memoriza" y "espera el siguiente"
+- [x] Cada cierto tiempo de espera se manda la secuencia de **z** como *demo* de videojuego.
 
 ---
 
