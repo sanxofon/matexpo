@@ -295,7 +295,7 @@ class ciudad(object):
                             if rr==0:
                                 imurl = self.images[10]+"b"+("ch" if self.smallscreen else "")+".png"
                             elif r==rr:
-                                imurl = self.images[10]+("ch" if self.smallscreen else "")+".png"
+                                imurl = self.images[10]+str(randint(1,8))+("ch" if self.smallscreen else "")+".png"
                             else:
                                 imurl = self.images[0]+("ch" if self.smallscreen else "")+".png"
                             self.cols[c][rr][2].set(self.cols[c][rr][1])
@@ -306,7 +306,7 @@ class ciudad(object):
 
                  # Poner azotea hasta arriba
                 if self.primos[int(datos[c][6])]:
-                    imurl = self.images[10]+("ch" if self.smallscreen else "")+".png"
+                    imurl = self.images[10]+str(randint(1,8))+("ch" if self.smallscreen else "")+".png"
                 else:
                     imurl = self.images[0]+("ch" if self.smallscreen else "")+".png"
                 im = ImageTk.PhotoImage(Image.open(imurl))
@@ -330,9 +330,9 @@ class ciudad(object):
 port = 'COM3'    # Puerto serial
 baud = 9600      # Baudios. Velocidad de muestreo
 fullscreen = 1   # Abrir en pantalla completa. Dev: 0, Prd: 1
-smallscreen = 0  # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
+smallscreen = 1  # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
 debuguear = 0    # Verbose. Muestra las tripas durante desarrollo. Permite probar el programa sin el Arduino
-randomserial = 0 # Genera cadenas de 21 dígitos al azar en vez de leer del serial
+randomserial = 1 # Genera cadenas de 21 dígitos al azar en vez de leer del serial
 
 # Test de puertos seriales
 listPorts = serial_ports()
