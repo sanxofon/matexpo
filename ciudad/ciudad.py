@@ -7,7 +7,7 @@ import serial
 from Tkinter import Tk, Label, Canvas, StringVar, PhotoImage
 from PIL import ImageTk, Image
 import time
-import sys
+import sys,re
 
 from random import randint
 
@@ -220,7 +220,8 @@ class ciudad(object):
         #######################################
         if self.port!=0:
             self.uart = serial.Serial(port=self.port, baudrate=self.baud, timeout=self.timeout)
-            # while True:
+            
+            # Instancia la clase:
             self.rl = ReadLine(self.uart)
 
         self._job = self.master.after(self.velocidad, self.onUpdate)
@@ -249,17 +250,26 @@ class ciudad(object):
                     str(randint(0,ra[randint(0,8)])).ljust(7,'0'),
                     str(randint(0,ra[randint(0,8)])).ljust(7,'0')
                 ]
-                datos = "".join(datos)
-                print(datos)
+                if randint(0,9)==0:
+                    datos = "\0".join(datos)
+                    datos = list(datos)
+                    if datos[3]:
+                        datos[3]='a'
+                    datos = "".join(datos)
+                else:
+                    datos = "".join(datos)
                 time.sleep(1)
         else: # Intenta leer del serial
 
             datos = ''
             data = self.rl.readline()
-            datos=str(data).strip()
+            datos = str(data).strip()
             
-        # if self.debuguear:
-        print("Datos en serial:",datos)
+        datos = re.sub('[^0-9]', '', datos) # Para evitar error en conversión a entero
+
+        if self.debuguear:
+            print("Datos en serial (limpio):",datos)
+            # exit(0)
         
         if len(datos)==0 or len(datos)!=21 or datos==self.memdatos:
             datos = None
@@ -330,9 +340,9 @@ class ciudad(object):
 port = 'COM3'    # Puerto serial
 baud = 9600      # Baudios. Velocidad de muestreo
 fullscreen = 1   # Abrir en pantalla completa. Dev: 0, Prd: 1
-smallscreen = 1  # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
+smallscreen = 0  # Usa las imágenes pequeñas, para probar en una pantalla de laptop (1366x786px)
 debuguear = 0    # Verbose. Muestra las tripas durante desarrollo. Permite probar el programa sin el Arduino
-randomserial = 1 # Genera cadenas de 21 dígitos al azar en vez de leer del serial
+randomserial = 0 # Genera cadenas de 21 dígitos al azar en vez de leer del serial
 
 # Test de puertos seriales
 listPorts = serial_ports()
